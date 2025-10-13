@@ -49,7 +49,7 @@ export async function POST(req: Request) {
 export async function PATCH(req: Request) {
   try {
     const body = await req.json();
-    const { id, updateUser } = body;
+    const { id, ...updateUser } = body;
 
     if (!id) {
       return NextResponse.json({ error: "ID não encontrado" }, { status: 400 });
