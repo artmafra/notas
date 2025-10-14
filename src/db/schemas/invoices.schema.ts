@@ -1,6 +1,8 @@
 import { pgTable, serial, text, integer, timestamp } from "drizzle-orm/pg-core";
 import { suppliers } from "./suppliers.schema";
 import { services } from "./services.schema";
+import { createInsertSchema, createUpdateSchema } from "drizzle-zod";
+import z from "zod";
 
 export const invoices = pgTable("invoice", {
   id: serial("id").primaryKey(),
@@ -23,3 +25,9 @@ export const invoices = pgTable("invoice", {
   inssCents: integer("inss_cents").notNull(),
   netAmountCents: integer("net_amount_cents").notNull(), // Líquido a receber
 });
+
+export const insertInvoiceSchema = createInsertSchema(invoices);
+export const updateInvoiceSchema = createUpdateSchema(invoices);
+
+export type InsertInvoiceSchema = z.infer<typeof insertInvoiceSchema>;
+export type UpdateInvoiceSchema = z.infer<typeof updateInvoiceSchema>;

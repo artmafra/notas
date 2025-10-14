@@ -1,4 +1,6 @@
 import { pgTable, serial, text, decimal } from "drizzle-orm/pg-core";
+import { createInsertSchema, createUpdateSchema } from "drizzle-zod";
+import z from "zod";
 
 export const services = pgTable("services", {
   id: serial("id").primaryKey(),
@@ -19,3 +21,9 @@ export const services = pgTable("services", {
   mei_irrf: decimal("irrf", { precision: 5, scale: 2 }),
   obs: text("obs"),
 });
+
+export const insertServiceSchema = createInsertSchema(services);
+export const updateServiceSchema = createUpdateSchema(services);
+
+export type InsertServiceSchema = z.infer<typeof insertServiceSchema>;
+export type UpdateServiceSchema = z.infer<typeof updateServiceSchema>;

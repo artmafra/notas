@@ -1,23 +1,15 @@
-import { NextResponse } from "next/server";
-import { db } from "../../../db/db";
-import { suppliers } from "../../../db/schemas/suppliers.schema";
 import { eq } from "drizzle-orm";
-import { z } from "zod";
-
-const supplierSchema = z.object({
-  cnpj: z.string(),
-  name: z.string(),
-  city: z.string(),
-  taxRegime: z.string(),
-  obs: z.string(),
-});
+import { NextResponse } from "next/server";
+import { insertSupplierSchema, suppliers } from "@/db/schemas";
+import { db } from "@/db/db";
+import { storage } from "@/storage";
 
 export async function GET() {
   try {
-    const supplier = await db.select().from(suppliers);
+    const supplier = await storage.supplier.getAllSuppliers();
     return NextResponse.json(supplier);
   } catch (error) {
-    console.error("Erro ao buscar fornecedor");
+    console.error(error);
     return NextResponse.json(
       { error: "Erro ao buscar fornecedor" },
       { status: 500 }
@@ -28,12 +20,14 @@ export async function GET() {
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const data = supplierSchema.parse(body);
+    console.log(123, body);
+    const data = insertSupplierSchema.parse(body);
 
-    const newSupplier = await db.insert(suppliers).values(data).returning();
+    const newSupplier = await storage.supplier.createSupplier(data);
+
     return NextResponse.json(newSupplier[0], { status: 201 });
   } catch (error) {
-    console.error("Erro ao criar fornecedor");
+    console.error(error);
     return NextResponse.json(
       { error: "Erro ao criar fornecedor" },
       { status: 400 }
@@ -44,21 +38,17 @@ export async function POST(req: Request) {
 export async function PATCH(req: Request) {
   try {
     const body = await req.json();
-    const { id, ...updateSupplier } = body;
+    const { id, ...data } = body;
 
     if (!id) {
       NextResponse.json({ error: "ID não encontrado" }, { status: 400 });
     }
 
-    const updated = await db
-      .update(suppliers)
-      .set(updateSupplier)
-      .where(eq(suppliers.id, id))
-      .returning();
+    const updated = await storage.supplier.updateSupplier(id, data);
 
     return NextResponse.json(updated[0]);
   } catch (error) {
-    console.error("Erro ao atualizar fornecedor", error);
+    console.error(error);
     return NextResponse.json(
       { error: "Erro ao atualizar fornecedor" },
       { status: 400 }
@@ -74,10 +64,10 @@ export async function DELETE(req: Request) {
       return NextResponse.json({ error: "ID não encontrado" }, { status: 400 });
     }
 
-    await db.delete(suppliers).where(eq(suppliers.id, id)).returning();
+    await storage.supplier.deleteSupplier(id);
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error("Erro ao remover fornecedor", error);
+    console.error(error);
     return NextResponse.json(
       { error: "Erro ao remover fornecedor" },
       { status: 400 }
