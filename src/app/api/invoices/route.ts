@@ -1,13 +1,6 @@
-import { NextResponse } from "next/server";
-import { db } from "../../../db/db";
-import {
-  insertInvoiceSchema,
-  invoices,
-  updateInvoiceSchema,
-} from "../../../db/schemas/invoices.schema";
-import { eq } from "drizzle-orm";
-import { z } from "zod";
+import { insertInvoiceSchema, updateInvoiceSchema } from "@/db/schemas";
 import { storage } from "@/storage";
+import { NextResponse } from "next/server";
 
 export async function GET() {
   try {

@@ -1,15 +1,13 @@
 import { NextResponse } from "next/server";
-
-import { eq } from "drizzle-orm";
+import { insertServiceSchema } from "@/db/schemas";
 import { storage } from "@/storage";
-import { insertServiceSchema, services } from "@/db/schemas";
 
 export async function GET() {
   try {
     const service = await storage.service.getAllServices();
     return NextResponse.json(service);
   } catch (error) {
-    console.error("Erro ao buscar serviço");
+    console.error("Erro ao buscar serviço", error);
     return NextResponse.json(
       { error: "Erro ao buscar serviço" },
       { status: 500 }
@@ -25,7 +23,7 @@ export async function POST(req: Request) {
     const newService = await storage.service.createService(data);
     return NextResponse.json(newService[0], { status: 201 });
   } catch (error) {
-    console.error("Erro ao criar serviço");
+    console.error("Erro ao criar serviço", error);
     return NextResponse.json(
       { error: "Erro ao criar serviço" },
       { status: 400 }
@@ -46,7 +44,7 @@ export async function PATCH(req: Request) {
 
     return NextResponse.json(updated[0]);
   } catch (error) {
-    console.error("Erro ao atualizar serviço");
+    console.error("Erro ao atualizar serviço", error);
     return NextResponse.json(
       { error: "Erro ao atualizar serviço" },
       { status: 400 }
@@ -66,7 +64,7 @@ export async function DELETE(req: Request) {
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error("Erro ao excluir serviço");
+    console.error("Erro ao excluir serviço", error);
     return NextResponse.json(
       { error: "Erro ao excluir serviço" },
       { status: 400 }

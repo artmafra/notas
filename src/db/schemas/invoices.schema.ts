@@ -6,9 +6,9 @@ import z from "zod";
 
 export const invoices = pgTable("invoice", {
   id: serial("id").primaryKey(),
-  supplierId: integer("supplier_id")
+  supplierCnpj: text("supplier_cnpj")
     .notNull()
-    .references(() => suppliers.id),
+    .references(() => suppliers.cnpj),
   serviceCode: text("service_code")
     .notNull()
     .references(() => services.code),

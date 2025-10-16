@@ -3,8 +3,7 @@ import { createInsertSchema, createUpdateSchema } from "drizzle-zod";
 import z from "zod";
 
 export const suppliers = pgTable("suppliers", {
-  id: serial("id").primaryKey(),
-  cnpj: text("cnpj").notNull().unique(),
+  cnpj: text("cnpj").primaryKey(),
   name: text("name").notNull().unique(),
   city: text("city").notNull(),
   taxRegime: text("taxRegime", { enum: ["SN", "N", "MEI"] }).notNull(),
@@ -21,5 +20,6 @@ export const insertSupplierSchema = createInsertSchema(suppliers).extend({
 });
 export const updateSupplierSchema = createUpdateSchema(suppliers);
 
+export type Supplier = typeof suppliers.$inferSelect;
 export type InsertSupplierSchema = z.infer<typeof insertSupplierSchema>;
 export type UpdateSupplierSchema = z.infer<typeof updateSupplierSchema>;

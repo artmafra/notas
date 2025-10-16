@@ -15,15 +15,26 @@ export class SuppliersStorage extends BaseStorage {
     return this.db.insert(suppliers).values(data).returning();
   }
 
-  updateSupplier(id: number, data: UpdateSupplierSchema) {
+  updateSupplier(cnpj: string, data: UpdateSupplierSchema) {
     return this.db
       .update(suppliers)
       .set(data)
-      .where(eq(suppliers.id, id))
+      .where(eq(suppliers.cnpj, cnpj))
       .returning();
   }
 
-  deleteSupplier(id: number) {
-    return this.db.delete(suppliers).where(eq(suppliers.id, id)).returning();
+  deleteSupplier(cnpj: string) {
+    return this.db
+      .delete(suppliers)
+      .where(eq(suppliers.cnpj, cnpj))
+      .returning();
+  }
+
+  getSupplierByCnpj(cnpj: string) {
+    return this.db
+      .select()
+      .from(suppliers)
+      .where(eq(suppliers.cnpj, cnpj))
+      .then((res) => res[0]);
   }
 }

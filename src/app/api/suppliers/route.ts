@@ -1,8 +1,6 @@
-import { eq } from "drizzle-orm";
-import { NextResponse } from "next/server";
-import { insertSupplierSchema, suppliers } from "@/db/schemas";
-import { db } from "@/db/db";
+import { insertSupplierSchema } from "@/db/schemas";
 import { storage } from "@/storage";
+import { NextResponse } from "next/server";
 
 export async function GET() {
   try {

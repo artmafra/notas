@@ -15,15 +15,23 @@ export class ServicesStorage extends BaseStorage {
     return this.db.insert(services).values(data).returning();
   }
 
-  updateService(id: number, data: UpdateServiceSchema) {
+  updateService(code: string, data: UpdateServiceSchema) {
     return this.db
       .update(services)
       .set(data)
-      .where(eq(services.id, id))
+      .where(eq(services.code, code))
       .returning();
   }
 
-  deleteService(id: number) {
-    return this.db.delete(services).where(eq(services.id, id)).returning();
+  deleteService(code: string) {
+    return this.db.delete(services).where(eq(services.code, code)).returning();
+  }
+
+  getServiceByCode(code: string) {
+    return this.db
+      .select()
+      .from(services)
+      .where(eq(services.code, code))
+      .then((res) => res[0]);
   }
 }

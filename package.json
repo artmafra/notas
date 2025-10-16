@@ -10,13 +10,16 @@
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
     "db:push": "drizzle-kit push",
-    "db:studio": "drizzle-kit studio"
+    "db:studio": "drizzle-kit studio",
+    "test:invoice": "dotenv -- npx tsx scripts/test-invoice.ts",
+    "test:add-data": "dotenv -- npx tsx scripts/add-data.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
     "@tanstack/react-table": "^8.21.3",
     "@types/pg": "^8.15.5",
     "dotenv": "^17.2.3",
+    "dotenv-cli": "^10.0.0",
     "drizzle-kit": "^0.31.5",
     "drizzle-orm": "^0.44.6",
     "drizzle-zod": "^0.8.3",
@@ -38,6 +41,7 @@
     "eslint": "^9",
     "eslint-config-next": "15.5.4",
     "tailwindcss": "^4",
+    "tsx": "^4.20.6",
     "typescript": "^5"
   }
 }
