@@ -56,12 +56,15 @@ export class InvoiceService {
 
     if (inss) {
       const inssFloat = parseFloat(inss);
+      const inssPercentage = inssFloat / 100;
       if (data.materialDeductionCents) {
-        resultMaterialDeductionCents -=
-          resultMaterialDeductionCents / inssFloat;
+        let percentageValueCents = resultValueCents * inssPercentage;
+        let percentageMaterialDeductionCents =
+          resultMaterialDeductionCents * inssPercentage;
+        resultMaterialDeductionCents =
+          percentageValueCents - percentageMaterialDeductionCents;
+        inss = resultMaterialDeductionCents;
       }
-
-      resultValueCents -= resultValueCents * inssFloat;
     }
 
     const netAmountCents = resultValueCents - resultMaterialDeductionCents;
