@@ -1,4 +1,5 @@
 import { insertInvoiceSchema, updateInvoiceSchema } from "@/db/schemas";
+import { service } from "@/services";
 import { storage } from "@/storage";
 import { NextResponse } from "next/server";
 
@@ -23,9 +24,9 @@ export async function POST(req: Request) {
   try {
     const body = await req.json();
     const data = insertInvoiceSchema.parse(body);
-    const newInvoice = await storage.invoice.createInvoice(data);
+    await service.invoice.createInvoice(data);
 
-    return NextResponse.json(newInvoice[0], { status: 201 });
+    return NextResponse.json({}, { status: 201 });
   } catch (error) {
     console.error("Erro ao criar nova nota fiscal", error);
     return NextResponse.json(

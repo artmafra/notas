@@ -1,6 +1,6 @@
 import {
   InsertInvoiceSchema,
-  invoices,
+  tableInvoices,
   UpdateInvoiceSchema,
 } from "@/db/schemas";
 import { BaseStorage } from "./base.storage";
@@ -8,22 +8,25 @@ import { eq } from "drizzle-orm";
 
 export class InvoicesStorage extends BaseStorage {
   getAllInvoices() {
-    return this.db.select().from(invoices);
+    return this.db.select().from(tableInvoices);
   }
 
   createInvoice(data: InsertInvoiceSchema) {
-    return this.db.insert(invoices).values(data).returning();
+    return this.db.insert(tableInvoices).values(data).returning();
   }
 
   updateInvoice(id: number, data: UpdateInvoiceSchema) {
     return this.db
-      .update(invoices)
+      .update(tableInvoices)
       .set(data)
-      .where(eq(invoices.id, id))
+      .where(eq(tableInvoices.id, id))
       .returning();
   }
 
   deleteInvoice(id: number) {
-    return this.db.delete(invoices).where(eq(invoices.id, id)).returning();
+    return this.db
+      .delete(tableInvoices)
+      .where(eq(tableInvoices.id, id))
+      .returning();
   }
 }

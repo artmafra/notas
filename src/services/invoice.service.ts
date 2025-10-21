@@ -1,20 +1,8 @@
-import { TaxRegime } from "@/db/schemas";
+import { InsertInvoiceSchema, TaxRegime } from "@/db/schemas";
 import { storage } from "@/storage";
 
-type CreateInvoiceSchema = {
-  supplierCnpj: string;
-  serviceCode: string;
-  valueCents: number;
-  entryDate: string;
-  issueDate: string;
-  dueDate: string;
-  description?: string;
-  invoiceNumber: string;
-  materialDeductionCents?: number;
-};
-
 export class InvoiceService {
-  async createInvoice(data: CreateInvoiceSchema) {
+  async createInvoice(data: InsertInvoiceSchema) {
     const supplier = await storage.supplier.getSupplierByCnpj(
       data.supplierCnpj
     );
@@ -33,20 +21,26 @@ export class InvoiceService {
 
     let tax = 0;
 
-    if (rates.inss) {
-      const taxValue = value * (rates.inss / 100);
-      const taxMaterial = material * (rates.inss / 100);
+    const inss = data.inssCents || rates.inss;
+
+    if (inss) {
+      const taxValue = value * (inss / 100);
+      const taxMaterial = material * (inss / 100);
       tax = taxValue - taxMaterial;
     }
 
-    if (value * (rates.cs / 100) >= 1000) {
-      const taxValue = value * (rates.cs / 100);
-      tax += taxValue;
+    if (rates.cs) {
+      if (value * (rates.cs / 100) >= 1000) {
+        const taxValue = value * (rates.cs / 100);
+        tax += taxValue;
+      }
     }
 
-    if (value * (rates.irrf / 100) >= 1000) {
-      const taxValue = value * (rates.irrf / 100);
-      tax += taxValue;
+    if (rates.irrf) {
+      if (value * (rates.irrf / 100) >= 1000) {
+        const taxValue = value * (rates.irrf / 100);
+        tax += taxValue;
+      }
     }
 
     if (rates.issqn) {
