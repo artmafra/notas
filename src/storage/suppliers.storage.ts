@@ -2,39 +2,39 @@ import { eq } from "drizzle-orm";
 import { BaseStorage } from "./base.storage";
 import {
   InsertSupplierSchema,
-  suppliers,
+  tableSuppliers,
   UpdateSupplierSchema,
 } from "@/db/schemas";
 
 export class SuppliersStorage extends BaseStorage {
   getAllSuppliers() {
-    return this.db.select().from(suppliers);
+    return this.db.select().from(tableSuppliers);
   }
 
   createSupplier(data: InsertSupplierSchema) {
-    return this.db.insert(suppliers).values(data).returning();
+    return this.db.insert(tableSuppliers).values(data).returning();
   }
 
   updateSupplier(cnpj: string, data: UpdateSupplierSchema) {
     return this.db
-      .update(suppliers)
+      .update(tableSuppliers)
       .set(data)
-      .where(eq(suppliers.cnpj, cnpj))
+      .where(eq(tableSuppliers.cnpj, cnpj))
       .returning();
   }
 
   deleteSupplier(cnpj: string) {
     return this.db
-      .delete(suppliers)
-      .where(eq(suppliers.cnpj, cnpj))
+      .delete(tableSuppliers)
+      .where(eq(tableSuppliers.cnpj, cnpj))
       .returning();
   }
 
   getSupplierByCnpj(cnpj: string) {
     return this.db
       .select()
-      .from(suppliers)
-      .where(eq(suppliers.cnpj, cnpj))
+      .from(tableSuppliers)
+      .where(eq(tableSuppliers.cnpj, cnpj))
       .then((res) => res[0]);
   }
 }

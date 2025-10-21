@@ -5,15 +5,15 @@ async function testCreateInvoice() {
     console.log("Testing invoice creation...");
 
     const testInvoiceData = {
-      supplierCnpj: "04825080000175", // Replace with existing supplier CNPJ
-      serviceCode: "701M -Paisagismo", // Replace with existing service code
-      valueCents: 10000, // R$ 100.00 in cents
+      supplierCnpj: "783512000171", // Replace with existing supplier CNPJ
+      serviceCode: "103M-Consultoria", // Replace with existing service code
+      valueCents: 20000, // R$ 200.00 in cents
       entryDate: "2025-10-15",
       issueDate: "2025-10-15",
       dueDate: "2025-11-15",
       description: "Test invoice description",
       invoiceNumber: "INV-TEST-001",
-      materialDeductionCents: 1000, // R$ 10.00 in cents
+      materialDeductionCents: 10000, // R$ 100.00 in cents
     };
 
     console.log("Test data:", testInvoiceData);

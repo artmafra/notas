@@ -1,3 +1,4 @@
+import { TaxRegime } from "@/db/schemas";
 import { storage } from "@/storage";
 
 type CreateInvoiceSchema = {
@@ -24,50 +25,36 @@ export class InvoiceService {
     if (!service) {
       throw new Error("Service not found");
     }
+    const taxRegime = supplier.taxRegime.toLowerCase() as TaxRegime;
+    const rates = service[taxRegime];
 
-    let cs;
-    let inss;
-    let irrf;
-    let issqn;
+    const material = data.materialDeductionCents || 0;
+    const value = data.valueCents || 0;
 
-    switch (supplier.taxRegime) {
-      case "SN":
-        cs = service.sn_cs;
-        inss = service.sn_inss;
-        irrf = service.sn_irrf;
-        issqn = service.sn_issqn;
-        break;
-      case "N":
-        cs = service.n_cs;
-        inss = service.n_inss;
-        irrf = service.n_irrf;
-        issqn = service.n_issqn;
-        break;
-      case "MEI":
-        cs = service.mei_cs;
-        inss = service.mei_inss;
-        irrf = service.mei_irrf;
-        issqn = service.mei_issqn;
-        break;
+    let tax = 0;
+
+    if (rates.inss) {
+      const taxValue = value * (rates.inss / 100);
+      const taxMaterial = material * (rates.inss / 100);
+      tax = taxValue - taxMaterial;
     }
 
-    let resultMaterialDeductionCents = data.materialDeductionCents || 0;
-    let resultValueCents = data.valueCents;
-
-    if (inss) {
-      const inssFloat = parseFloat(inss);
-      const inssPercentage = inssFloat / 100;
-      if (data.materialDeductionCents) {
-        let percentageValueCents = resultValueCents * inssPercentage;
-        let percentageMaterialDeductionCents =
-          resultMaterialDeductionCents * inssPercentage;
-        resultMaterialDeductionCents =
-          percentageValueCents - percentageMaterialDeductionCents;
-        inss = resultMaterialDeductionCents;
-      }
+    if (value * (rates.cs / 100) >= 1000) {
+      const taxValue = value * (rates.cs / 100);
+      tax += taxValue;
     }
 
-    const netAmountCents = resultValueCents - resultMaterialDeductionCents;
+    if (value * (rates.irrf / 100) >= 1000) {
+      const taxValue = value * (rates.irrf / 100);
+      tax += taxValue;
+    }
+
+    if (rates.issqn) {
+      const taxValue = value * (rates.issqn / 100);
+      tax += taxValue;
+    }
+
+    const netAmountCents = value - tax;
 
     return netAmountCents;
   }

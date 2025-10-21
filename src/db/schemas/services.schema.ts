@@ -1,28 +1,43 @@
-import { pgTable, serial, text, decimal } from "drizzle-orm/pg-core";
+import { jsonb, pgTable, text } from "drizzle-orm/pg-core";
 import { createInsertSchema, createUpdateSchema } from "drizzle-zod";
 import z from "zod";
 
-export const services = pgTable("services", {
+export const tableServices = pgTable("services", {
   code: text("code").primaryKey(),
   description: text("description").notNull(),
   debit: text("debit").notNull(),
-  sn_issqn: decimal("sn_issqn", { precision: 5, scale: 2 }),
-  sn_inss: decimal("sn_inss", { precision: 5, scale: 2 }),
-  sn_cs: decimal("sn_cs", { precision: 5, scale: 2 }),
-  sn_irrf: decimal("sn_irrf", { precision: 5, scale: 2 }),
-  n_issqn: decimal("n_issqn", { precision: 5, scale: 2 }),
-  n_inss: decimal("n_inss", { precision: 5, scale: 2 }),
-  n_cs: decimal("n_cs", { precision: 5, scale: 2 }),
-  n_irrf: decimal("n_irrf", { precision: 5, scale: 2 }),
-  mei_issqn: decimal("mei_issqn", { precision: 5, scale: 2 }),
-  mei_inss: decimal("mei_inss", { precision: 5, scale: 2 }),
-  mei_cs: decimal("mei_cs", { precision: 5, scale: 2 }),
-  mei_irrf: decimal("mei_irrf", { precision: 5, scale: 2 }),
+  sn: jsonb("sn").$type<TaxRates>().notNull(),
+  n: jsonb("n").$type<TaxRates>().notNull(),
+  mei: jsonb("mei").$type<TaxRates>().notNull(),
   obs: text("obs"),
 });
 
-export const insertServiceSchema = createInsertSchema(services);
-export const updateServiceSchema = createUpdateSchema(services);
+export const taxRatesSchema = z.object({
+  issqn: z.number().nullable(),
+  inss: z.number().nullable(),
+  cs: z.number().nullable(),
+  irrf: z.number().nullable(),
+});
 
+export const insertServiceSchema = createInsertSchema(tableServices, {
+  sn: taxRatesSchema,
+  n: taxRatesSchema,
+  mei: taxRatesSchema,
+});
+
+export const updateServiceSchema = createUpdateSchema(tableServices, {
+  sn: taxRatesSchema.optional(),
+  n: taxRatesSchema.optional(),
+  mei: taxRatesSchema.optional(),
+});
+
+export type TaxRegime = "sn" | "n" | "mei";
+export type TaxRates = {
+  issqn: number | null;
+  inss: number | null;
+  cs: number | null;
+  irrf: number | null;
+};
+export type Service = typeof tableServices.$inferSelect;
 export type InsertServiceSchema = z.infer<typeof insertServiceSchema>;
 export type UpdateServiceSchema = z.infer<typeof updateServiceSchema>;

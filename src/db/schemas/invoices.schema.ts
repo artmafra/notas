@@ -1,17 +1,16 @@
-import { pgTable, serial, text, integer, timestamp } from "drizzle-orm/pg-core";
-import { suppliers } from "./suppliers.schema";
-import { services } from "./services.schema";
+import { tableServices, tableSuppliers } from "@/db/schemas";
+import { integer, pgTable, serial, text, timestamp } from "drizzle-orm/pg-core";
 import { createInsertSchema, createUpdateSchema } from "drizzle-zod";
 import z from "zod";
 
-export const invoices = pgTable("invoice", {
+export const tableInvoices = pgTable("invoices", {
   id: serial("id").primaryKey(),
   supplierCnpj: text("supplier_cnpj")
     .notNull()
-    .references(() => suppliers.cnpj),
+    .references(() => tableSuppliers.cnpj),
   serviceCode: text("service_code")
     .notNull()
-    .references(() => services.code),
+    .references(() => tableServices.code),
   entryDate: timestamp("entry_date").notNull().defaultNow(),
   issueDate: timestamp("issue_date").notNull(),
   dueDate: timestamp("due_date").notNull(),
@@ -26,8 +25,19 @@ export const invoices = pgTable("invoice", {
   netAmountCents: integer("net_amount_cents").notNull(), // Líquido a receber
 });
 
-export const insertInvoiceSchema = createInsertSchema(invoices);
-export const updateInvoiceSchema = createUpdateSchema(invoices);
+export const insertInvoiceSchema = createInsertSchema(tableInvoices).omit({
+  id: true,
+});
+export const updateInvoiceSchema = createUpdateSchema(tableInvoices);
 
+export const createInvoiceSchema = insertInvoiceSchema.omit({
+  issqnCents: true,
+  csCents: true,
+  inssCents: true,
+  netAmountCents: true,
+});
+
+export type Invoice = typeof tableInvoices.$inferSelect;
 export type InsertInvoiceSchema = z.infer<typeof insertInvoiceSchema>;
 export type UpdateInvoiceSchema = z.infer<typeof updateInvoiceSchema>;
+export type CreateInvoiceSchema = z.infer<typeof createInvoiceSchema>;
