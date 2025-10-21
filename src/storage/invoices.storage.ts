@@ -3,8 +3,8 @@ import {
   tableInvoices,
   UpdateInvoiceSchema,
 } from "@/db/schemas";
-import { BaseStorage } from "./base.storage";
 import { eq } from "drizzle-orm";
+import { BaseStorage } from "./base.storage";
 
 export class InvoicesStorage extends BaseStorage {
   getAllInvoices() {

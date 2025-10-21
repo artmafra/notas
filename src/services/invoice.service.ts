@@ -51,5 +51,7 @@ export class InvoiceService {
     const netAmountCents = value - tax;
 
     return netAmountCents;
+
+    // await storage.invoice.createInvoice(data);
   }
 }
