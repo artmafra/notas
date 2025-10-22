@@ -19,9 +19,6 @@ export const tableInvoices = pgTable("invoices", {
   materialDeductionCents: integer("material_deduction_cents")
     .notNull()
     .default(0),
-  issqnCents: integer("issqn_cents").notNull(),
-  csCents: integer("cs_cents").notNull(),
-  inssCents: integer("inss_cents").notNull(),
   netAmountCents: integer("net_amount_cents").notNull(), // Líquido a receber
 });
 
@@ -30,12 +27,15 @@ export const insertInvoiceSchema = createInsertSchema(tableInvoices).omit({
 });
 export const updateInvoiceSchema = createUpdateSchema(tableInvoices);
 
-export const createInvoiceSchema = insertInvoiceSchema.omit({
-  issqnCents: true,
-  csCents: true,
-  inssCents: true,
-  netAmountCents: true,
-});
+export const createInvoiceSchema = insertInvoiceSchema
+  .omit({
+    netAmountCents: true,
+  })
+  .extend({
+    inssPercent: z.number().optional(),
+    csPercent: z.number().optional(),
+    issqnPercent: z.number().optional(),
+  });
 
 export type Invoice = typeof tableInvoices.$inferSelect;
 export type InsertInvoiceSchema = z.infer<typeof insertInvoiceSchema>;

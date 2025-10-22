@@ -1,8 +1,8 @@
-import { InsertInvoiceSchema, TaxRegime } from "@/db/schemas";
+import { CreateInvoiceSchema, TaxRegime } from "@/db/schemas";
 import { storage } from "@/storage";
 
 export class InvoiceService {
-  async createInvoice(data: InsertInvoiceSchema) {
+  async createInvoice(data: CreateInvoiceSchema) {
     const supplier = await storage.supplier.getSupplierByCnpj(
       data.supplierCnpj
     );
@@ -21,7 +21,7 @@ export class InvoiceService {
 
     let tax = 0;
 
-    const inss = data.inssCents || rates.inss;
+    const inss = data.inssPercent || rates.inss;
 
     if (inss) {
       const taxValue = value * (inss / 100);
@@ -50,8 +50,9 @@ export class InvoiceService {
 
     const netAmountCents = value - tax;
 
-    return netAmountCents;
-
-    // await storage.invoice.createInvoice(data);
+    await storage.invoice.createInvoice({
+      ...data,
+      netAmountCents,
+    });
   }
 }
