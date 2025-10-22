@@ -17,7 +17,9 @@
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
     "@tanstack/react-table": "^8.21.3",
+    "@types/bcrypt": "^6.0.0",
     "@types/pg": "^8.15.5",
+    "bcrypt": "^6.0.0",
     "dotenv": "^17.2.3",
     "dotenv-cli": "^10.0.0",
     "drizzle-kit": "^0.31.5",
