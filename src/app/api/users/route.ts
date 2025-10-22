@@ -1,20 +1,10 @@
+import { createUserSchema } from "@/db/schemas";
+import { service } from "@/services";
 import { NextResponse } from "next/server";
-import { db } from "../../../db/db";
-import { users } from "../../../db/schemas/users.schema";
-import { eq } from "drizzle-orm";
-import { z } from "zod";
-
-const userSchema = z.object({
-  email: z.string(),
-  password: z.string(),
-  isActive: z.boolean(),
-  createdAt: z.iso.datetime(),
-  updatedAt: z.iso.datetime(),
-});
 
 export async function GET() {
   try {
-    const user = await db.select().from(users);
+    const user = await service.user.getAllUsers();
     return NextResponse.json(user);
   } catch (error) {
     console.error("Erro ao buscar usuário", error);
@@ -28,14 +18,9 @@ export async function GET() {
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const data = userSchema.parse(body);
-    const preparedData = {
-      ...data,
-      createdAt: new Date(data.createdAt),
-      updatedAt: new Date(data.updatedAt),
-    };
+    const data = createUserSchema.parse(body);
 
-    const newUser = await db.insert(users).values(preparedData).returning();
+    const newUser = await service.user.createUser(data);
     return NextResponse.json(newUser[0], { status: 201 });
   } catch (error) {
     console.error("Erro ao criar usuário", error);
@@ -55,11 +40,7 @@ export async function PATCH(req: Request) {
       return NextResponse.json({ error: "ID não encontrado" }, { status: 400 });
     }
 
-    const updated = await db
-      .update(users)
-      .set(updateUser)
-      .where(eq(users.id, id))
-      .returning();
+    const updated = await service.user.updateUser(id, updateUser);
 
     return NextResponse.json(updated[0]);
   } catch (error) {
@@ -79,7 +60,7 @@ export async function DELETE(req: Request) {
       return NextResponse.json({ error: "ID não encontrado" }, { status: 400 });
     }
 
-    await db.delete(users).where(eq(users.id, id));
+    await service.user.deleteUser(id);
   } catch (error) {
     console.error("Erro ao excluir usuário", error);
     return NextResponse.json(
