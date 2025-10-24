@@ -11,6 +11,30 @@ export class InvoicesStorage extends BaseStorage {
     return this.db.select().from(tableInvoices);
   }
 
+  getInvoiceById(id: number) {
+    return this.db.select().from(tableInvoices).where(eq(tableInvoices.id, id));
+  }
+
+  getInvoiceByDueDate(dueDate: Date) {
+    return this.db
+      .select()
+      .from(tableInvoices)
+      .where(eq(tableInvoices.dueDate, dueDate));
+  }
+  getInvoiceByIssueDate(issueDate: Date) {
+    return this.db
+      .select()
+      .from(tableInvoices)
+      .where(eq(tableInvoices.issueDate, issueDate));
+  }
+
+  getInvoiceByEntryDate(entryDate: Date) {
+    return this.db
+      .select()
+      .from(tableInvoices)
+      .where(eq(tableInvoices.entryDate, entryDate));
+  }
+
   createInvoice(data: InsertInvoiceSchema) {
     return this.db.insert(tableInvoices).values(data).returning();
   }

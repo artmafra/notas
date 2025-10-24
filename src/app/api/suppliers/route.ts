@@ -36,13 +36,13 @@ export async function POST(req: Request) {
 export async function PATCH(req: Request) {
   try {
     const body = await req.json();
-    const { id, ...data } = body;
+    const { cnpj, ...data } = body;
 
-    if (!id) {
-      NextResponse.json({ error: "ID não encontrado" }, { status: 400 });
+    if (!cnpj) {
+      NextResponse.json({ error: "CNPJ não encontrado" }, { status: 400 });
     }
 
-    const updated = await storage.supplier.updateSupplier(id, data);
+    const updated = await storage.supplier.updateSupplier(cnpj, data);
 
     return NextResponse.json(updated[0]);
   } catch (error) {
@@ -56,13 +56,16 @@ export async function PATCH(req: Request) {
 
 export async function DELETE(req: Request) {
   try {
-    const { id } = await req.json();
+    const { cnpj } = await req.json();
 
-    if (!id) {
-      return NextResponse.json({ error: "ID não encontrado" }, { status: 400 });
+    if (!cnpj) {
+      return NextResponse.json(
+        { error: "CNPJ não encontrado" },
+        { status: 400 }
+      );
     }
 
-    await storage.supplier.deleteSupplier(id);
+    await storage.supplier.deleteSupplier(cnpj);
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error(error);

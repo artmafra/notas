@@ -1,4 +1,8 @@
-import { CreateInvoiceSchema, TaxRegime } from "@/db/schemas";
+import {
+  CreateInvoiceSchema,
+  TaxRegime,
+  UpdateInvoiceSchema,
+} from "@/db/schemas";
 import { storage } from "@/storage";
 
 export class InvoiceService {
@@ -54,5 +58,37 @@ export class InvoiceService {
       ...data,
       netAmountCents,
     });
+  }
+
+  async getAllInvoices() {
+    await storage.invoice.getAllInvoices();
+  }
+
+  async getInvoiceById(id: number) {
+    await storage.invoice.getInvoiceById(id);
+  }
+
+  async getInvoiceByDueDate(dueDate: Date) {
+    await storage.invoice.getInvoiceByDueDate(dueDate);
+  }
+
+  async getInvoiceByIssueDate(issueDate: Date) {
+    await storage.invoice.getInvoiceByIssueDate(issueDate);
+  }
+
+  async getInvoiceByEntryDate(entryDate: Date) {
+    await storage.invoice.getInvoiceByEntryDate(entryDate);
+  }
+
+  async updateInvoice(id: number, data: UpdateInvoiceSchema) {
+    const updatedData = {
+      id,
+      ...data,
+    };
+    await storage.invoice.updateInvoice(id, updatedData);
+  }
+
+  async deleteInvoice(id: number) {
+    await storage.invoice.deleteInvoice(id);
   }
 }
