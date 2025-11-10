@@ -12,6 +12,7 @@
     "db:push": "drizzle-kit push",
     "db:studio": "drizzle-kit studio",
     "test:invoice": "dotenv -- npx tsx scripts/test-invoice.ts",
+    "test:user": "dotenv -- npx tsx scripts/test-user.ts",
     "test:add-data": "dotenv -- npx tsx scripts/add-data.ts"
   },
   "dependencies": {
