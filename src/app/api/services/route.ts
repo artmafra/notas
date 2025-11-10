@@ -34,13 +34,16 @@ export async function POST(req: Request) {
 export async function PATCH(req: Request) {
   try {
     const body = await req.json();
-    const { id, ...data } = body;
+    const { code, ...data } = body;
 
-    if (!id) {
-      return NextResponse.json({ error: "ID não encontrado" }, { status: 400 });
+    if (!code) {
+      return NextResponse.json(
+        { error: "Código não encontrado" },
+        { status: 400 }
+      );
     }
 
-    const updated = await storage.service.updateService(id, data);
+    const updated = await storage.service.updateService(code, data);
 
     return NextResponse.json(updated[0]);
   } catch (error) {
@@ -54,13 +57,16 @@ export async function PATCH(req: Request) {
 
 export async function DELETE(req: Request) {
   try {
-    const { id } = await req.json();
+    const { code } = await req.json();
 
-    if (!id) {
-      return NextResponse.json({ error: "ID não encontrado" }, { status: 400 });
+    if (!code) {
+      return NextResponse.json(
+        { error: "Código não encontrado" },
+        { status: 400 }
+      );
     }
 
-    await storage.service.deleteService(id);
+    await storage.service.deleteService(code);
 
     return NextResponse.json({ success: true });
   } catch (error) {

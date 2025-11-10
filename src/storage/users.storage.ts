@@ -7,6 +7,22 @@ export class UsersStorage extends BaseStorage {
     return this.db.select().from(tableUsers);
   }
 
+  async getUserByEmail(email: string) {
+    const [row] = await this.db
+      .select()
+      .from(tableUsers)
+      .where(eq(tableUsers.email, email))
+      .limit(1);
+
+    if (!row) return null;
+
+    return {
+      ...row,
+      hashedPassword:
+        (row as any).password ?? (row as any).password_hash ?? undefined,
+    };
+  }
+
   createUser(data: InsertUserSchema) {
     return this.db.insert(tableUsers).values(data).returning();
   }

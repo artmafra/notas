@@ -6,6 +6,11 @@ export class UserService {
   async getAllUsers() {
     return storage.user.getAllUsers();
   }
+
+  async getUserByEmail(email: string) {
+    return storage.user.getUserByEmail(email);
+  }
+
   async createUser(data: CreateUserSchema) {
     const hashedPassword = await bcrypt.hash(data.password, 10);
 
