@@ -1,17 +1,16 @@
 import { createUserSchema } from "@/db/schemas";
 import { service } from "@/services";
 import { NextResponse } from "next/server";
+import { requireSession } from "@/lib/helper";
 
 export async function GET() {
+  await requireSession();
   try {
     const user = await service.user.getAllUsers();
     return NextResponse.json(user);
-  } catch (error) {
-    console.error("Erro ao buscar usuário", error);
-    return NextResponse.json(
-      { error: "Erro ao buscar usuário" },
-      { status: 500 }
-    );
+  } catch (error: any) {
+    const status = error.message === "UNAUTHORIZED" ? 401 : 500;
+    return NextResponse.json({ error: "Erro ao buscar usuário" }, { status });
   }
 }
 
@@ -32,6 +31,7 @@ export async function POST(req: Request) {
 }
 
 export async function PATCH(req: Request) {
+  await requireSession();
   try {
     const body = await req.json();
     const { id, ...updateUser } = body;
@@ -43,16 +43,17 @@ export async function PATCH(req: Request) {
     const updated = await service.user.updateUser(id, updateUser);
 
     return NextResponse.json(updated[0]);
-  } catch (error) {
-    console.error("Erro ao atualizar usuário", error);
+  } catch (error: any) {
+    const status = error.message === "UNAUTHORIZED" ? 401 : 400;
     return NextResponse.json(
       { error: "Erro ao atualizar usuário" },
-      { status: 400 }
+      { status }
     );
   }
 }
 
 export async function DELETE(req: Request) {
+  await requireSession();
   try {
     const { id } = await req.json();
 
@@ -61,11 +62,8 @@ export async function DELETE(req: Request) {
     }
 
     await service.user.deleteUser(id);
-  } catch (error) {
-    console.error("Erro ao excluir usuário", error);
-    return NextResponse.json(
-      { error: "Erro ao excluir usuário" },
-      { status: 400 }
-    );
+  } catch (error: any) {
+    const status = error.message === "UNAUTHORIZED" ? 401 : 400;
+    return NextResponse.json({ error: "Erro ao excluir usuário" }, { status });
   }
 }

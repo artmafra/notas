@@ -1,21 +1,24 @@
 import { insertSupplierSchema } from "@/db/schemas";
 import { storage } from "@/storage";
 import { NextResponse } from "next/server";
+import { requireSession } from "@/lib/helper";
 
 export async function GET() {
+  await requireSession();
   try {
     const supplier = await storage.supplier.getAllSuppliers();
     return NextResponse.json(supplier);
-  } catch (error) {
-    console.error(error);
+  } catch (error: any) {
+    const status = error.message === "UNAUTHORIZED" ? 401 : 500;
     return NextResponse.json(
       { error: "Erro ao buscar fornecedor" },
-      { status: 500 }
+      { status }
     );
   }
 }
 
 export async function POST(req: Request) {
+  await requireSession();
   try {
     const body = await req.json();
     console.log(123, body);
@@ -24,16 +27,14 @@ export async function POST(req: Request) {
     const newSupplier = await storage.supplier.createSupplier(data);
 
     return NextResponse.json(newSupplier[0], { status: 201 });
-  } catch (error) {
-    console.error(error);
-    return NextResponse.json(
-      { error: "Erro ao criar fornecedor" },
-      { status: 400 }
-    );
+  } catch (error: any) {
+    const status = error.message === "UNAUTHORIZED" ? 401 : 400;
+    return NextResponse.json({ error: "Erro ao criar fornecedor" }, { status });
   }
 }
 
 export async function PATCH(req: Request) {
+  await requireSession();
   try {
     const body = await req.json();
     const { cnpj, ...data } = body;
@@ -45,16 +46,17 @@ export async function PATCH(req: Request) {
     const updated = await storage.supplier.updateSupplier(cnpj, data);
 
     return NextResponse.json(updated[0]);
-  } catch (error) {
-    console.error(error);
+  } catch (error: any) {
+    const status = error.message === "UNAUTHORIZED" ? 401 : 400;
     return NextResponse.json(
       { error: "Erro ao atualizar fornecedor" },
-      { status: 400 }
+      { status }
     );
   }
 }
 
 export async function DELETE(req: Request) {
+  await requireSession();
   try {
     const { cnpj } = await req.json();
 
@@ -67,11 +69,11 @@ export async function DELETE(req: Request) {
 
     await storage.supplier.deleteSupplier(cnpj);
     return NextResponse.json({ success: true });
-  } catch (error) {
-    console.error(error);
+  } catch (error: any) {
+    const status = error.message === "UNAUTHORIZED" ? 401 : 400;
     return NextResponse.json(
       { error: "Erro ao remover fornecedor" },
-      { status: 400 }
+      { status }
     );
   }
 }
