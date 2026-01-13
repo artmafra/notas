@@ -2,9 +2,19 @@ import { createUserSchema } from "@/db/schemas";
 import { service } from "@/services";
 import { NextResponse } from "next/server";
 import { requireSession } from "@/lib/helper";
+import { ratelimit } from "@/lib/ratelimit";
 
-export async function GET() {
+export async function GET(req: Request) {
   await requireSession();
+
+  const ip = req.headers.get("x-forwarded-for") ?? "anonymous";
+
+  const { success } = await ratelimit.limit(ip);
+
+  if (!success) {
+    return NextResponse.json({ error: "Rate Limit exceeded" }, { status: 429 });
+  }
+
   try {
     const user = await service.user.getAllUsers();
     return NextResponse.json(user);
@@ -15,6 +25,16 @@ export async function GET() {
 }
 
 export async function POST(req: Request) {
+  await requireSession();
+
+  const ip = req.headers.get("x-forwarded-for") ?? "anonymous";
+
+  const { success } = await ratelimit.limit(ip);
+
+  if (!success) {
+    return NextResponse.json({ error: "Rate Limit exceeded" }, { status: 429 });
+  }
+
   try {
     const body = await req.json();
     const data = createUserSchema.parse(body);
@@ -32,6 +52,15 @@ export async function POST(req: Request) {
 
 export async function PATCH(req: Request) {
   await requireSession();
+
+  const ip = req.headers.get("x-forwarded-for") ?? "anonymous";
+
+  const { success } = await ratelimit.limit(ip);
+
+  if (!success) {
+    return NextResponse.json({ error: "Rate Limit exceeded" }, { status: 429 });
+  }
+
   try {
     const body = await req.json();
     const { id, ...updateUser } = body;
@@ -54,6 +83,15 @@ export async function PATCH(req: Request) {
 
 export async function DELETE(req: Request) {
   await requireSession();
+
+  const ip = req.headers.get("x-forwarded-for") ?? "anonymous";
+
+  const { success } = await ratelimit.limit(ip);
+
+  if (!success) {
+    return NextResponse.json({ error: "Rate Limit exceeded" }, { status: 429 });
+  }
+
   try {
     const { id } = await req.json();
 
