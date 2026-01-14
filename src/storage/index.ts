@@ -1,3 +1,4 @@
+import { AuditLogsStorage } from "./audit-log.storage";
 import { InvoicesStorage } from "./invoices.storage";
 import { ServicesStorage } from "./services.storage";
 import { SuppliersStorage } from "./suppliers.storage";
@@ -8,12 +9,14 @@ export class DatabaseStorage {
   supplier: SuppliersStorage;
   service: ServicesStorage;
   user: UsersStorage;
+  auditLog: AuditLogsStorage;
 
   constructor() {
     this.invoice = new InvoicesStorage();
     this.supplier = new SuppliersStorage();
     this.service = new ServicesStorage();
     this.user = new UsersStorage();
+    this.auditLog = new AuditLogsStorage();
   }
 }
 
