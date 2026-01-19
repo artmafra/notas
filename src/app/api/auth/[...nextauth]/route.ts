@@ -40,7 +40,8 @@ export const authOptions: import("next-auth").AuthOptions = {
       user?: import("next-auth").User | undefined;
     }) {
       if (user) {
-        token.id = (user as any).id;
+        token.id = user.id;
+        token.email = user.email;
       }
       return token;
     },

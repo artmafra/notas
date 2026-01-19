@@ -61,7 +61,7 @@ export class InvoiceService {
   }
 
   async getAllInvoices() {
-    await storage.invoice.getAllInvoices();
+    return await storage.invoice.getAllInvoices();
   }
 
   async getInvoiceById(id: number) {

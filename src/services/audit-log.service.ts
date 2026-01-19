@@ -2,13 +2,13 @@ import { storage } from "@/storage";
 import { CreateAuditLogSchema } from "@/db/schemas";
 
 export class AuditLogService {
-  async getAllAuditLogs() {
-    return storage.auditLog.getAllAuditLogs();
+  async getAllLogs() {
+    return storage.auditLog.getAllLogs();
   }
-  async getAuditLogByDate(date: Date) {
-    return storage.auditLog.getAuditLogByDate(date);
+  async getLogByDate(date: Date) {
+    return storage.auditLog.getLogByDate(date);
   }
-  async createAuditLog(data: CreateAuditLogSchema) {
-    return storage.auditLog.createAuditLog(data);
+  async createLog(data: CreateAuditLogSchema) {
+    return storage.auditLog.createLog(data);
   }
 }

@@ -3,16 +3,16 @@ import { BaseStorage } from "./base.storage";
 import { eq } from "drizzle-orm";
 
 export class AuditLogsStorage extends BaseStorage {
-  getAllAuditLogs() {
+  getAllLogs() {
     return this.db.select().from(tableAuditLog);
   }
-  getAuditLogByDate(date: Date) {
+  getLogByDate(date: Date) {
     return this.db
       .select()
       .from(tableAuditLog)
       .where(eq(tableAuditLog.createdAt, date));
   }
-  createAuditLog(data: CreateAuditLogSchema) {
+  createLog(data: CreateAuditLogSchema) {
     return this.db.insert(tableAuditLog).values(data).returning();
   }
 }

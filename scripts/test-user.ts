@@ -7,7 +7,7 @@ async function testCreateUser() {
 
     const testUserData: CreateUserSchema = {
       email: "artmafra@teste.com",
-      password: "test123456",
+      password: "test123",
     };
 
     console.log("Test data:", testUserData);
